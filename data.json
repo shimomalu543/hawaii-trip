@@ -1,0 +1,355 @@
+
+
+  <!-- Day 1 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-number">DAY<span>1</span></div>
+      <div>
+        <div class="day-title">到着・ワイキキビーチデビュー</div>
+        <div class="day-date">5月3日（日）</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event" draggable="true">
+    <div class="drag-handle">⠿</div>
+    <div class="event-time">未定</div>
+    <div class="event-icon">🏔️</div>
+    <div class="event-body">
+      <div class="event-title">
+        <span class="event-title-text">パタゴニア ホノルル</span>
+        <span class="badge badge-sightseeing">🗺️ 観光</span>
+      </div>
+      <div class="event-desc">アウトドアブランドの直営店。ハワイ限定品も</div>
+    </div>
+    <button class="delete-btn" title="削除">×</button>
+  </div><div class="event" draggable="true">
+    <div class="drag-handle">⠿</div>
+    <div class="event-time">未定</div>
+    <div class="event-icon">🥐</div>
+    <div class="event-body">
+      <div class="event-title">
+        <span class="event-title-text">ロイヤル ハワイアン ベーカリー</span>
+        <span class="badge badge-gourmet">🍽️ グルメ</span>
+      </div>
+      <div class="event-desc">ピンクパレスホテル内の老舗ベーカリー</div>
+    </div>
+    <button class="delete-btn" title="削除">×</button>
+  </div><div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">午後</div>
+        <div class="event-icon">✈️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">ダニエル・K・イノウエ国際空港 到着</span></div>
+          <div class="event-desc">ワイキキのホテルへチェックイン。荷物を置いてリフレッシュ。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">夕方</div>
+        <div class="event-icon">🏖️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">ワイキキビーチ 夕暮れ散策</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">ハワイ到着の感動を味わいながらビーチをのんびりと。ダイヤモンドヘッドを背景に夕焼けを眺める。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">18:30</div>
+        <div class="event-icon">🍽️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Duke's Waikiki</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">ビーチフロントに建つ老舗レストラン。フレッシュフィッシュや伝統的なハワイアン料理を堪能。</div>
+          <div class="tip">💡 予約推奨。サンセット時間帯は席が埋まりやすい。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">夜</div>
+        <div class="event-icon">🌺</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">カラカウア通り ナイトウォーク</span> <span class="badge badge-sightseeing">🗺️ 観光</span></div>
+          <div class="event-desc">ワイキキのメインストリートをぶらり。ABCストアで翌日のスナックを調達。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <button class="add-event-btn">＋ 予定を追加</button>
+    </div>
+  </div>
+
+  <!-- Day 2 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-number">DAY<span>2</span></div>
+      <div>
+        <div class="day-title">ダイヤモンドヘッド &amp; ハナウマ湾</div>
+        <div class="day-date">5月4日（月）</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">06:00</div>
+        <div class="event-icon">⛰️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">ダイヤモンドヘッド 早朝ハイキング</span> <span class="badge badge-activity">🎯 アクティビティ</span></div>
+          <div class="event-desc">往復約2km、所要約1.5時間。山頂からのワイキキパノラマは絶景。混雑を避けるため早朝がベスト。</div>
+          <div class="tip">💡 事前にオンライン予約（入場料 $5）が必要。水・日焼け止め必携。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">09:00</div>
+        <div class="event-icon">🍩</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Leonard's Bakery マラサダ</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">ハワイ名物のポルトガル系揚げドーナツ「マラサダ」発祥の老舗。外はカリッ、中はふわふわ。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">10:30</div>
+        <div class="event-icon">🐠</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">ハナウマ湾 シュノーケリング</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">ハワイ一の透明度を誇る天然保護区。カラフルな魚たちと泳ぐ極上体験。シュノーケルセットはレンタル可。</div>
+          <div class="tip">💡 火曜定休。$25/人の入場料あり。事前予約必須（人数制限あり）。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">14:00</div>
+        <div class="event-icon">🍱</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Nico's Pier 38 ランチ</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">地元漁師直送の新鮮な魚を使ったポキ丼やフィッシュタコスが絶品。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">夕方</div>
+        <div class="event-icon">🌅</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">カハラ周辺ビーチ散歩</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">観光客の少ない静かなビーチでゆったりと夕暮れを楽しむ。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <button class="add-event-btn">＋ 予定を追加</button>
+    </div>
+  </div>
+
+  <!-- Day 3 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-number">DAY<span>3</span></div>
+      <div>
+        <div class="day-title">ノースショア ドライブ</div>
+        <div class="day-date">5月5日（火・こどもの日）</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">07:30</div>
+        <div class="event-icon">🚗</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">カイルアビーチへ出発</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">ワイキキから車で約40分。エメラルドグリーンの海と白砂が広がるオアフ屈指のビーチ。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">08:30</div>
+        <div class="event-icon">🚣</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">カヤック / SUP 体験</span> <span class="badge badge-activity">🎯 アクティビティ</span></div>
+          <div class="event-desc">カイルア湾でカヤックまたはスタンドアップパドルボード。透明な海の上を気持ちよく漕ぎ進む。</div>
+          <div class="tip">💡 現地でレンタル可。2時間〜 $50〜。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">11:30</div>
+        <div class="event-icon">🍤</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Giovanni's Shrimp Truck ランチ</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">ノースショア名物・ガーリックバターシュリンプの元祖フードトラック。</div>
+          <div class="tip">💡 並ぶことが多い。ランチピーク前（11時台）がねらい目。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">13:00</div>
+        <div class="event-icon">🏄</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">サンセットビーチ 見学</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">世界的に有名なサーフスポット。5月は穏やかな波のため泳ぎやすい。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">14:30</div>
+        <div class="event-icon">🏘️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">ハレイワタウン 散策</span> <span class="badge badge-sightseeing">🗺️ 観光</span></div>
+          <div class="event-desc">レトロでおしゃれなサーフタウン。ギャラリー・ショップ・カフェが並ぶ。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">15:30</div>
+        <div class="event-icon">🍧</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Matsumoto Shave Ice</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">創業1951年のシェーブアイス老舗。カラフルなシロップと練乳がけは絶品。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <button class="add-event-btn">＋ 予定を追加</button>
+    </div>
+  </div>
+
+  <!-- Day 4 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-number">DAY<span>4</span></div>
+      <div>
+        <div class="day-title">パールハーバー &amp; コオリナラグーン</div>
+        <div class="day-date">5月6日（水）</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">08:00</div>
+        <div class="event-icon">🕊️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">パールハーバー 国立記念公園</span> <span class="badge badge-sightseeing">🗺️ 観光</span></div>
+          <div class="event-desc">アリゾナ記念館でUSS Arizonaを見学。太平洋戦争の歴史を学ぶ貴重な体験。厳粛な雰囲気で。</div>
+          <div class="tip">💡 無料だが事前予約が必要（recreation.gov）。所要約2〜3時間。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">12:00</div>
+        <div class="event-icon">🍳</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Helena's Hawaiian Food ロコモコ</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">ジェームス・ビアード賞受賞の伝説的なハワイアンフードレストラン。ロコモコやカルアポーク必食。</div>
+          <div class="tip">💡 火・水のみ営業。売り切れ次第閉店なので早めに。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">14:00</div>
+        <div class="event-icon">🏝️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Ko Olina ラグーン</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">人工ラグーンが4つ並ぶリゾートエリア。波が穏やかで初心者にも安全。透明度も高い。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">夕方</div>
+        <div class="event-icon">🌊</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">コオリナ サンセット鑑賞</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">西向きのビーチなので、オアフ島随一の美しいサンセットが楽しめる。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">18:30</div>
+        <div class="event-icon">🛍️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">アラモアナ周辺でディナー</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">アラモアナセンター周辺のレストランで夕食。Roy's HawaiiやThe Cheesecake Factoryなど選択肢多数。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <button class="add-event-btn">＋ 予定を追加</button>
+    </div>
+  </div>
+
+  <!-- Day 5 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-number">DAY<span>5</span></div>
+      <div>
+        <div class="day-title">最終日・お土産 &amp; 帰国</div>
+        <div class="day-date">5月7日（木）</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">08:00</div>
+        <div class="event-icon">🎨</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">カカアコ ウォールアートエリア</span> <span class="badge badge-sightseeing">🗺️ 観光</span></div>
+          <div class="event-desc">世界のアーティストが描いた巨大壁画が並ぶストリートアートの聖地。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">09:30</div>
+        <div class="event-icon">🥞</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Eggs 'n Things パンケーキ朝食</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">ワイキキの人気店。ふわふわパンケーキの上に生クリームたっぷり。</div>
+          <div class="tip">💡 朝は並ぶことが多いので早めに。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">11:00</div>
+        <div class="event-icon">🛍️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">アラモアナショッピングセンター</span> <span class="badge badge-sightseeing">🗺️ 観光</span></div>
+          <div class="event-desc">世界最大規模のオープンモール。マカダミアナッツ・コナコーヒー・コスメなどお土産をまとめて調達。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">14:00</div>
+        <div class="event-icon">🏨</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">ホテル チェックアウト・空港へ</span></div>
+          <div class="event-desc">国際線は出発の3時間前には空港到着を目標に。お土産の最終確認もお忘れなく。</div>
+          <div class="tip">💡 ワイキキ〜空港は渋滞を考慮し余裕を持って出発。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">夜</div>
+        <div class="event-icon">✈️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">帰国フライト</span></div>
+          <div class="event-desc">Mahalo, Hawaiʻi! またいつかきっと戻ってきます 🌺</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <button class="add-event-btn">＋ 予定を追加</button>
+    </div>
+  </div>
+
