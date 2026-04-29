@@ -141,6 +141,16 @@
     .cand-title { font-size: 0.82rem; font-weight: bold; color: #333; line-height: 1.35; }
     .cand-desc { font-size: 0.72rem; color: #888; line-height: 1.4; }
     .cand-badge { margin-top: auto; }
+    .cand-map {
+      display: inline-flex; align-items: center; gap: 3px;
+      margin-top: 6px; padding: 4px 8px;
+      background: #f0faf9; border: 1px solid #b2e0da; border-radius: 20px;
+      color: #00897b; font-size: 0.7rem; font-weight: bold;
+      text-decoration: none; white-space: nowrap;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cand-map:hover { background: #d4f0ec; }
 
     /* ── Main / Day cards ── */
     main { max-width: 860px; margin: 28px auto; padding: 0 16px 100px; }
@@ -769,6 +779,31 @@ const CANDIDATES = [
   { icon:'🚚', title:'フードトラックめぐり',       desc:'カカアコエリアの多国籍フードトラック',             badge:'badge-gourmet',     label:'🍽️ グルメ' },
   { icon:'🍹', title:'ルーフトップバー',           desc:'アンダーカレントHNLで夜景とカクテル',             badge:'badge-gourmet',     label:'🍽️ グルメ' },
   { icon:'🥬', title:'KCCファーマーズマーケット', desc:'土曜朝開催。ローカル食材・ハワイスイーツが並ぶ',   badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  // ── Mapsリスト②より ──
+  { icon:'🌺', title:'ブーツ＆キモズ',              desc:'地元民に人気のハワイアンプレートランチの名店',      badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🥐', title:'Waioli Kitchen & Bake Shop',  desc:'おしゃれなカフェ＆ベーカリー。朝食・ランチに◎',   badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🏖️', title:'ラニカイ・ビーチ',             desc:'エメラルドブルーの絶景ビーチ。カイルア隣接',       badge:'badge-beach',       label:'🏖️ ビーチ' },
+  { icon:'☕', title:'ボガーツ カフェ',              desc:'地元に愛されるカジュアルダイニング＆カフェ',        badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🍔', title:'テディーズビガーバーガー',     desc:'ハワイのクラフトバーガー専門店。ボリューム満点',    badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'☕', title:'アーボ カフェ',               desc:'評価4.5の人気コーヒーショップ。居心地のよい空間',  badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🥗', title:'Nalu Health Bar & Cafe',      desc:'アサイーボウル・スムージーなどヘルシーメニュー',    badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🥣', title:'ハレイワ ボウルズ',            desc:'ノースショアのアサイーボウル専門店。行列必至',      badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🧃', title:"'Anakē's Juice Bar",          desc:'評価4.9の絶品フレッシュジュースバー',              badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🥗', title:'ALO Cafe Hawaii - Waikiki',  desc:'評価4.8のベジタリアンカフェ＆デリ。ヘルシー志向に', badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🌳', title:'ハウツリー',                  desc:'老舗の高級レストラン。ワイキキの木陰でゆったり食事', badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🥣', title:'Tropical Tribe',             desc:'評価4.6のアサイー専門店。フォトジェニックなボウル', badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🐢', title:'ラニアケア・ビーチ',           desc:'野生のウミガメが上陸することで有名なビーチ',        badge:'badge-beach',       label:'🏖️ ビーチ' },
+  { icon:'🍦', title:'イル・ジェラート',             desc:'評価4.7のジェラート専門店。ハワイらしいフレーバーも', badge:'badge-gourmet',    label:'🍽️ グルメ' },
+  { icon:'🏝️', title:'マジック・アイランド',              desc:'アラモアナ公園の先端の半島。夕日・ピクニックに最適',   badge:'badge-beach',    label:'🏖️ ビーチ' },
+  { icon:'🍹', title:'レッドフィッシュ',                  desc:'ハッピーアワーが人気のバー＆ダイニング',               badge:'badge-gourmet',  label:'🍽️ グルメ' },
+  { icon:'🌿', title:'ヘブンリー アイランド ライフスタイル', desc:'評価4.4のオーガニック料理レストラン。$20〜30',        badge:'badge-gourmet',  label:'🍽️ グルメ' },
+  { icon:'🦕', title:'クアロア・ランチ',                  desc:'ジュラシックパーク撮影地。ATVやジップライン体験も',    badge:'badge-activity', label:'🎯 アクティビティ' },
+  { icon:'🐟', title:'オノ シーフード',                   desc:'評価4.6の新鮮な魚介料理。地元民にも人気の穴場',       badge:'badge-gourmet',  label:'🍽️ グルメ' },
+  { icon:'🍹', title:'ザ ビーチ バー',                   desc:'ビーチフロントのバー。$20〜30でトロピカルドリンクを', badge:'badge-gourmet',  label:'🍽️ グルメ' },
+  { icon:'🐟', title:'マグロ スポット',                  desc:'評価4.6のポケ専門店。新鮮なマグロポケが名物',         badge:'badge-gourmet',  label:'🍽️ グルメ' },
+  { icon:'☕', title:'アイランド・ヴィンテージ・コーヒー', desc:'評価4.4の人気コーヒーショップ。コナコーヒーが絶品',  badge:'badge-gourmet',  label:'🍽️ グルメ' },
+  { icon:'🥤', title:'ダ・コーブ ヘルス バー＆カフェ',   desc:'ヘルシー料理専門。スムージー・アサイーボウルなど',    badge:'badge-gourmet',  label:'🍽️ グルメ' },
+  { icon:'🍽️', title:'モンキーポッド・キッチン',          desc:'評価4.3のカジュアルレストラン。ハッピーアワーも人気', badge:'badge-gourmet',  label:'🍽️ グルメ' },
 ];
 
 const BADGE_TYPES = [
@@ -830,12 +865,16 @@ function buildCandidates() {
     card.dataset.desc       = c.desc;
     card.dataset.badge      = c.badge;
     card.dataset.badgeLabel = c.label;
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.title + ' Hawaii')}`;
     card.innerHTML = `
       <div class="cand-icon">${c.icon}</div>
       <div class="cand-title">${c.title}</div>
       <div class="cand-desc">${c.desc}</div>
       <div class="cand-badge"><span class="badge ${c.badge}">${c.label}</span></div>
+      <a class="cand-map" href="${mapsUrl}" target="_blank" rel="noopener">📍 地図を開く</a>
     `;
+    card.querySelector('.cand-map').addEventListener('click', e => e.stopPropagation());
+    card.querySelector('.cand-map').addEventListener('touchend', e => e.stopPropagation());
     card.addEventListener('dragstart', e => {
       dragType = 'candidate';
       dragData = { icon: c.icon, title: c.title, desc: c.desc, badge: c.badge, label: c.label };
