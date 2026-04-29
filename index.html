@@ -149,8 +149,18 @@
       text-decoration: none; white-space: nowrap;
       transition: background 0.15s;
       -webkit-tap-highlight-color: transparent;
+      cursor: pointer;
     }
     .cand-map:hover { background: #d4f0ec; }
+
+    /* ── Event map link ── */
+    .event-map {
+      font-size: 0.82rem; text-decoration: none; color: #aaa;
+      padding: 1px 4px; border-radius: 4px; flex-shrink: 0;
+      transition: color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent; cursor: pointer;
+    }
+    .event-map:hover { color: #00897b; background: #f0faf9; }
 
     /* ── Main / Day cards ── */
     main { max-width: 860px; margin: 28px auto; padding: 0 16px 100px; }
@@ -873,8 +883,13 @@ function buildCandidates() {
       <div class="cand-badge"><span class="badge ${c.badge}">${c.label}</span></div>
       <a class="cand-map" href="${mapsUrl}" target="_blank" rel="noopener">📍 地図を開く</a>
     `;
-    card.querySelector('.cand-map').addEventListener('click', e => e.stopPropagation());
-    card.querySelector('.cand-map').addEventListener('touchend', e => e.stopPropagation());
+    const mapBtn = card.querySelector('.cand-map');
+    const openMap = e => {
+      e.stopPropagation(); e.preventDefault();
+      window.open(mapsUrl, '_blank', 'noopener');
+    };
+    mapBtn.addEventListener('click', openMap);
+    mapBtn.addEventListener('touchend', openMap);
     card.addEventListener('dragstart', e => {
       dragType = 'candidate';
       dragData = { icon: c.icon, title: c.title, desc: c.desc, badge: c.badge, label: c.label };
@@ -900,6 +915,7 @@ function createEventEl(data, time = '未定') {
       <div class="event-title">
         <span class="event-title-text">${data.title}</span>
         <span class="badge ${data.badge}">${data.label}</span>
+        <a class="event-map" href="#" title="Google Mapsで開く">📍</a>
       </div>
       <div class="event-desc">${data.desc}</div>
     </div>
@@ -980,7 +996,28 @@ main.addEventListener('drop', e => {
   dragData = null;
 });
 
-// ── Delete buttons (event delegation) ────────────────────────
+// ── タイムライン既存イベントに📍を追加 ────────────────────────
+function addEventMapLinks() {
+  main.querySelectorAll('.event').forEach(ev => {
+    if (ev.querySelector('.event-map')) return;
+    const titleDiv = ev.querySelector('.event-title');
+    if (!titleDiv) return;
+    const a = document.createElement('a');
+    a.className = 'event-map'; a.href = '#'; a.title = 'Google Mapsで開く';
+    a.textContent = '📍';
+    titleDiv.appendChild(a);
+  });
+}
+
+function openEventMap(ev) {
+  const title = ev?.querySelector('.event-title-text')?.textContent.trim();
+  if (title) window.open(
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(title + ' Hawaii')}`,
+    '_blank', 'noopener'
+  );
+}
+
+// ── Delete / Add / Badge / EventMap (event delegation) ────────
 main.addEventListener('click', e => {
   if (e.target.classList.contains('delete-btn')) {
     e.target.closest('.event')?.remove();
@@ -991,7 +1028,19 @@ main.addEventListener('click', e => {
   if (e.target.classList.contains('badge') && document.body.classList.contains('edit-mode')) {
     cycleBadge(e.target);
   }
+  if (e.target.classList.contains('event-map')) {
+    e.preventDefault();
+    openEventMap(e.target.closest('.event'));
+  }
 });
+
+// モバイルタッチ対応
+main.addEventListener('touchend', e => {
+  if (e.target.classList.contains('event-map')) {
+    e.preventDefault(); e.stopPropagation();
+    openEventMap(e.target.closest('.event'));
+  }
+}, { passive: false });
 
 function cycleBadge(badge) {
   const cur  = BADGE_TYPES.findIndex(t => badge.classList.contains(t.cls));
@@ -1094,6 +1143,7 @@ async function ghLoad() {
     ghS('sha', file.sha);
     const html = decodeURIComponent(escape(atob(file.content)));
     main.innerHTML = html;
+    addEventMapLinks();
     setSyncStatus('saved');
     return true;
   } catch { setSyncStatus('error'); return false; }
@@ -1159,6 +1209,7 @@ document.getElementById('modalSave').addEventListener('click', async () => {
 buildCandidates();
 saveOriginal();
 loadFromStorage();
+addEventMapLinks();  // 既存イベントに📍を追加（ghLoad後も再実行される）
 
 // ── Touch Drag & Drop (iOS / モバイル対応) ─────────────────────
 let tEl     = null;   // ドラッグ中の .event
@@ -1215,6 +1266,9 @@ function tCleanup() {
 }
 
 document.addEventListener('touchstart', e => {
+  // 地図ボタンはドラッグ処理をスキップ
+  if (e.target.closest('.cand-map') || e.target.closest('.event-map')) return;
+
   const handle = e.target.closest('.drag-handle');
   const card   = e.target.closest('.candidate-card');
   tStartX = e.touches[0].clientX;
