@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ハワイ旅程表 2026｜5/3〜5/7</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+      background: linear-gradient(135deg, #e0f7f4 0%, #fff8e8 100%);
+      min-height: 100vh;
+      color: #333;
+      transition: padding-top 0.2s;
+    }
+
+    /* ── Edit toolbar ── */
+    #editToolbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: #1a2e2c; color: white;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px;
+      box-shadow: 0 3px 16px rgba(0,0,0,0.35);
+      transform: translateY(-100%);
+      transition: transform 0.22s cubic-bezier(.4,0,.2,1);
+    }
+    #editToolbar.visible { transform: translateY(0); }
+    body.edit-mode { padding-top: 50px; }
+    #editToolbar .toolbar-left { font-size: 0.88rem; opacity: 0.85; }
+    #editToolbar .toolbar-right { display: flex; gap: 10px; }
+    .tbtn {
+      border: none; cursor: pointer; border-radius: 8px;
+      font-family: inherit; font-size: 0.85rem; padding: 6px 16px; font-weight: bold;
+    }
+    .tbtn-cancel { background: rgba(255,255,255,0.12); color: white; }
+    .tbtn-cancel:hover { background: rgba(255,255,255,0.22); }
+    .tbtn-save { background: #00c9b1; color: #fff; }
+    .tbtn-save:hover { background: #00a99d; }
+    .tbtn-reset { background: rgba(255,80,80,0.2); color: #ffaaaa; font-size: 0.78rem; }
+    .tbtn-reset:hover { background: rgba(255,80,80,0.35); }
+
+    /* ── Floating edit button ── */
+    #editToggleBtn {
+      position: fixed;
+      bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+      right: 24px; z-index: 150;
+      background: #00a99d; color: white;
+      border: none; border-radius: 50px; padding: 14px 24px;
+      font-size: 0.95rem; font-weight: bold; font-family: inherit;
+      cursor: pointer; box-shadow: 0 4px 18px rgba(0,169,157,0.45);
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #editToggleBtn:hover { background: #009288; transform: scale(1.04); }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #00a99d, #00c9b1);
+      color: white; text-align: center; padding: 48px 20px 36px;
+      position: relative; overflow: hidden;
+    }
+    header::before { content:'🌺'; position:absolute; font-size:160px; opacity:0.08; top:-20px; left:-20px; }
+    header::after  { content:'🌊'; position:absolute; font-size:160px; opacity:0.08; bottom:-30px; right:-10px; }
+    header h1 { font-size: 2.2rem; font-weight: bold; letter-spacing: 2px; margin-bottom: 8px; }
+    header .subtitle { font-size: 1.1rem; opacity: 0.9; margin-bottom: 16px; }
+    header .meta {
+      display: inline-flex; gap: 20px;
+      background: rgba(255,255,255,0.15); border-radius: 30px;
+      padding: 8px 24px; font-size: 0.95rem;
+    }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+      padding: 14px 20px; background: white;
+      border-bottom: 2px solid #e8f8f6; font-size: 0.85rem; color: #555;
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-block; font-size: 0.72rem; padding: 2px 8px;
+      border-radius: 10px; font-weight: bold; white-space: nowrap;
+    }
+    .badge-gourmet     { background: #fff0e0; color: #e07000; }
+    .badge-beach       { background: #e0f4ff; color: #0080c0; }
+    .badge-activity    { background: #e8ffe0; color: #207020; }
+    .badge-sightseeing { background: #f5e8ff; color: #7030c0; }
+
+    /* ── Candidates panel ── */
+    #candidates {
+      background: #f7fffe;
+      border-bottom: 2px solid #d4f0ec;
+    }
+    .candidates-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 24px;
+      cursor: default;
+    }
+    .candidates-header .cand-title {
+      font-weight: bold; font-size: 0.95rem; color: #00897b;
+    }
+    .candidates-header .cand-hint {
+      font-size: 0.78rem; color: #888; flex: 1;
+    }
+    #toggleCandidates {
+      background: none; border: 1px solid #b2e0da; border-radius: 20px;
+      color: #00897b; font-size: 0.78rem; padding: 4px 12px;
+      cursor: pointer; font-family: inherit; white-space: nowrap;
+      transition: background 0.15s;
+    }
+    #toggleCandidates:hover { background: #e0faf7; }
+
+    .candidates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      gap: 10px; padding: 4px 20px 18px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s;
+      max-height: 320px;
+      opacity: 1;
+    }
+    .candidates-grid.collapsed { max-height: 0; overflow: hidden; padding-top: 0; padding-bottom: 0; opacity: 0; }
+
+    .candidate-card {
+      background: white; border-radius: 14px;
+      border: 1.5px solid #e0f0ee;
+      padding: 14px 12px 12px;
+      cursor: grab; user-select: none;
+      transition: box-shadow 0.15s, transform 0.12s, border-color 0.15s;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .candidate-card:hover {
+      box-shadow: 0 4px 16px rgba(0,169,157,0.18);
+      border-color: #00c9b1; transform: translateY(-2px);
+    }
+    .candidate-card:active { cursor: grabbing; }
+    .candidate-card.dragging { opacity: 0.35; transform: scale(0.97); }
+    .cand-icon { font-size: 1.6rem; line-height: 1; }
+    .cand-title { font-size: 0.82rem; font-weight: bold; color: #333; line-height: 1.35; }
+    .cand-desc { font-size: 0.72rem; color: #888; line-height: 1.4; }
+    .cand-badge { margin-top: auto; }
+
+    /* ── Main / Day cards ── */
+    main { max-width: 860px; margin: 28px auto; padding: 0 16px 100px; }
+
+    .day-card {
+      background: white; border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,169,157,0.10);
+      margin-bottom: 28px; overflow: hidden;
+      transition: box-shadow 0.15s;
+    }
+    .day-header {
+      display: flex; align-items: center; gap: 16px; padding: 18px 24px;
+      background: linear-gradient(90deg, #00a99d, #00c9b1); color: white;
+    }
+    .day-number {
+      background: rgba(255,255,255,0.25); border-radius: 50%;
+      width: 52px; height: 52px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: bold; flex-shrink: 0;
+    }
+    .day-number span { font-size: 1.4rem; line-height: 1; }
+    .day-title { font-size: 1.25rem; font-weight: bold; }
+    .day-date  { font-size: 0.85rem; opacity: 0.85; margin-top: 2px; }
+
+    .timeline { padding: 16px 24px 20px; }
+
+    /* ── Events ── */
+    .event {
+      display: flex; gap: 12px; padding: 11px 0;
+      border-bottom: 1px solid #f0f0f0; align-items: flex-start;
+    }
+    .event:last-of-type { border-bottom: none; }
+
+    /* Drag handle */
+    .drag-handle {
+      color: #ccc; font-size: 1.1rem; cursor: grab; flex-shrink: 0;
+      padding: 2px 4px; line-height: 1.6; letter-spacing: -1px;
+      transition: color 0.15s;
+      align-self: stretch; display: flex; align-items: center;
+      min-width: 28px; min-height: 44px; /* iOS最小タップ領域 */
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .drag-handle:hover { color: #00a99d; }
+    .drag-handle:active { cursor: grabbing; color: #00a99d; }
+
+    .event-time {
+      min-width: 50px; font-size: 0.8rem; color: #00a99d;
+      font-weight: bold; padding-top: 3px;
+    }
+    .event-icon { font-size: 1.4rem; min-width: 26px; text-align: center; }
+    .event-body { flex: 1; min-width: 0; }
+    .event-title {
+      font-size: 0.98rem; font-weight: bold; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .event-title-text { flex-shrink: 1; }
+    .event-desc { font-size: 0.85rem; color: #666; line-height: 1.5; }
+    .tip { font-size: 0.78rem; color: #f08c00; margin-top: 4px; }
+
+    /* ── Drag & drop states ── */
+    .event.dragging { opacity: 0.25; }
+
+    .drag-placeholder {
+      height: 52px;
+      border: 2px dashed #00c9b1;
+      border-radius: 10px;
+      background: rgba(0,201,177,0.06);
+      margin: 4px 0;
+      pointer-events: none;
+      flex-shrink: 0;
+    }
+
+    .timeline.drag-over {
+      background: rgba(0,201,177,0.04);
+      border-radius: 12px;
+    }
+
+    /* ── Edit mode ── */
+    .edit-mode [contenteditable] {
+      border-radius: 4px; outline: none; min-width: 20px; min-height: 1em; cursor: text;
+    }
+    .edit-mode [contenteditable]:hover { background: rgba(0,169,157,0.07); box-shadow: 0 0 0 2px rgba(0,169,157,0.15); }
+    .edit-mode [contenteditable]:focus { background: rgba(0,169,157,0.10); box-shadow: 0 0 0 2px rgba(0,169,157,0.35); }
+    .edit-mode .badge { cursor: pointer; }
+    .edit-mode .badge:hover { opacity: 0.72; }
+
+    /* ── Delete & Add buttons ── */
+    .delete-btn {
+      display: none; background: none; border: none; cursor: pointer;
+      color: #ccc; font-size: 1.1rem; font-weight: bold;
+      padding: 2px 5px; border-radius: 6px; line-height: 1;
+      flex-shrink: 0; align-self: flex-start; margin-top: 2px;
+    }
+    .edit-mode .delete-btn { display: block; }
+    .delete-btn:hover { background: #ffe8e8; color: #d00; }
+
+    .add-event-btn {
+      display: none; width: 100%; margin-top: 12px; padding: 10px;
+      border: 2px dashed #b2e6e2; border-radius: 12px;
+      background: none; color: #00a99d;
+      font-size: 0.88rem; font-family: inherit; cursor: pointer;
+    }
+    .edit-mode .add-event-btn { display: block; }
+    .add-event-btn:hover { background: #f0faf9; }
+
+    footer { text-align: center; padding: 24px; color: #888; font-size: 0.8rem; }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.5rem; }
+      header { padding: 32px 16px 24px; }
+      .day-header { padding: 14px 16px; }
+      .timeline { padding: 12px 16px 16px; }
+      .event { gap: 8px; }
+      .candidates-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        max-height: 260px;
+      }
+      .candidates-header { padding: 12px 16px; }
+      .candidates-header .cand-hint { display: none; } /* 狭いので非表示 */
+      #editToggleBtn {
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+        right: 14px; padding: 13px 20px; font-size: 1rem;
+      }
+      body.edit-mode { padding-top: 56px; }
+      #editToolbar { padding: 10px 12px; }
+      #editToolbar .toolbar-left { display: none; }
+      .tbtn { padding: 8px 12px; }
+    }
+
+    /* ── GitHub sync status ── */
+    #syncStatus {
+      font-size: 0.78rem; padding: 4px 10px; border-radius: 20px;
+      background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.75);
+      white-space: nowrap;
+    }
+
+    /* ── Settings button ── */
+    #settingsBtn {
+      position: fixed; bottom: calc(28px + env(safe-area-inset-bottom,0px)); left: 24px;
+      z-index: 150; background: white; color: #00a99d;
+      border: 2px solid #00c9b1; border-radius: 50%; width: 48px; height: 48px;
+      font-size: 1.2rem; cursor: pointer; box-shadow: 0 3px 12px rgba(0,169,157,0.25);
+      display: flex; align-items: center; justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    @media (max-width: 600px) {
+      #settingsBtn { bottom: calc(16px + env(safe-area-inset-bottom,0px)); left: 14px; }
+    }
+
+    /* ── Modal overlay ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.55); align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: white; border-radius: 20px; padding: 28px 24px;
+      width: 100%; max-width: 460px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .modal-box h2 { font-size: 1.1rem; margin-bottom: 6px; color: #00897b; }
+    .modal-box p  { font-size: 0.82rem; color: #888; margin-bottom: 20px; line-height: 1.5; }
+    .modal-field { margin-bottom: 14px; }
+    .modal-field label { display: block; font-size: 0.8rem; font-weight: bold; color: #555; margin-bottom: 5px; }
+    .modal-field input {
+      width: 100%; border: 1.5px solid #ddd; border-radius: 10px;
+      padding: 10px 12px; font-size: 0.9rem; font-family: inherit; outline: none;
+    }
+    .modal-field input:focus { border-color: #00c9b1; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .modal-actions button {
+      flex: 1; border: none; border-radius: 10px; padding: 12px;
+      font-family: inherit; font-size: 0.9rem; font-weight: bold; cursor: pointer;
+    }
+    .btn-primary { background: #00a99d; color: white; }
+    .btn-primary:hover { background: #009288; }
+    .btn-secondary { background: #f0f0f0; color: #555; }
+    .modal-status { font-size: 0.8rem; margin-top: 12px; text-align: center; min-height: 1.2em; }
+  </style>
+</head>
+<body>
+
+<!-- Edit toolbar -->
+<div id="editToolbar">
+  <span class="toolbar-left">✏️ 編集モード</span>
+  <div class="toolbar-right">
+    <span id="syncStatus">📱 ローカルのみ</span>
+    <button class="tbtn tbtn-reset" id="resetBtn">🔄 初期化</button>
+    <button class="tbtn tbtn-cancel" id="cancelBtn">キャンセル</button>
+    <button class="tbtn tbtn-save" id="saveBtn">💾 保存する</button>
+  </div>
+</div>
+
+<button id="editToggleBtn">✏️ 編集する</button>
+<button id="settingsBtn" title="GitHub設定">⚙️</button>
+
+<!-- GitHub設定モーダル -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal-box">
+    <h2>⚙️ GitHub 同期設定</h2>
+    <p>GitHubリポジトリと連携すると、どのデバイスからでも旅程を編集・保存できます。</p>
+    <div class="modal-field">
+      <label>GitHubユーザー名</label>
+      <input type="text" id="ghUser" placeholder="例: your-username" autocomplete="off" autocapitalize="none">
+    </div>
+    <div class="modal-field">
+      <label>リポジトリ名</label>
+      <input type="text" id="ghRepo" placeholder="例: hawaii-trip" autocomplete="off" autocapitalize="none">
+    </div>
+    <div class="modal-field">
+      <label>Personal Access Token</label>
+      <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="modalClose">閉じる</button>
+      <button class="btn-primary" id="modalSave">接続テスト &amp; 保存</button>
+    </div>
+    <div class="modal-status" id="modalStatus"></div>
+  </div>
+</div>
+
+<header>
+  <h1>🌺 ハワイ旅程表</h1>
+  <p class="subtitle">オアフ島 ／ Oʻahu Island</p>
+  <div class="meta">
+    <span>📅 2026年 5月3日（日）〜 5月7日（木）</span>
+    <span>✈️ 5泊5日</span>
+  </div>
+</header>
+
+<div class="legend">
+  <span class="badge badge-gourmet">🍽️ グルメ</span>
+  <span class="badge badge-beach">🏖️ ビーチ</span>
+  <span class="badge badge-activity">🎯 アクティビティ</span>
+  <span class="badge badge-sightseeing">🗺️ 観光</span>
+</div>
+
+<!-- Candidates panel -->
+<section id="candidates">
+  <div class="candidates-header">
+    <span class="cand-title">💡 アクティビティ候補</span>
+    <span class="cand-hint">タイムラインへドラッグして追加できます</span>
+    <button id="toggleCandidates">∧ 折りたたむ</button>
+  </div>
+  <div class="candidates-grid" id="candidatesGrid">
+    <!-- JS で生成 -->
+  </div>
+</section>
+
+<main id="mainContent">
+
+  <!-- Day 1 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-number">DAY<span>1</span></div>
+      <div>
+        <div class="day-title">到着・ワイキキビーチデビュー</div>
+        <div class="day-date">5月3日（日）</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">午後</div>
+        <div class="event-icon">✈️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">ダニエル・K・イノウエ国際空港 到着</span></div>
+          <div class="event-desc">ワイキキのホテルへチェックイン。荷物を置いてリフレッシュ。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">夕方</div>
+        <div class="event-icon">🏖️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">ワイキキビーチ 夕暮れ散策</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">ハワイ到着の感動を味わいながらビーチをのんびりと。ダイヤモンドヘッドを背景に夕焼けを眺める。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">18:30</div>
+        <div class="event-icon">🍽️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Duke's Waikiki</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">ビーチフロントに建つ老舗レストラン。フレッシュフィッシュや伝統的なハワイアン料理を堪能。</div>
+          <div class="tip">💡 予約推奨。サンセット時間帯は席が埋まりやすい。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">夜</div>
+        <div class="event-icon">🌺</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">カラカウア通り ナイトウォーク</span> <span class="badge badge-sightseeing">🗺️ 観光</span></div>
+          <div class="event-desc">ワイキキのメインストリートをぶらり。ABCストアで翌日のスナックを調達。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <button class="add-event-btn">＋ 予定を追加</button>
+    </div>
+  </div>
+
+  <!-- Day 2 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-number">DAY<span>2</span></div>
+      <div>
+        <div class="day-title">ダイヤモンドヘッド & ハナウマ湾</div>
+        <div class="day-date">5月4日（月）</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">06:00</div>
+        <div class="event-icon">⛰️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">ダイヤモンドヘッド 早朝ハイキング</span> <span class="badge badge-activity">🎯 アクティビティ</span></div>
+          <div class="event-desc">往復約2km、所要約1.5時間。山頂からのワイキキパノラマは絶景。混雑を避けるため早朝がベスト。</div>
+          <div class="tip">💡 事前にオンライン予約（入場料 $5）が必要。水・日焼け止め必携。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">09:00</div>
+        <div class="event-icon">🍩</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Leonard's Bakery マラサダ</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">ハワイ名物のポルトガル系揚げドーナツ「マラサダ」発祥の老舗。外はカリッ、中はふわふわ。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">10:30</div>
+        <div class="event-icon">🐠</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">ハナウマ湾 シュノーケリング</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">ハワイ一の透明度を誇る天然保護区。カラフルな魚たちと泳ぐ極上体験。シュノーケルセットはレンタル可。</div>
+          <div class="tip">💡 火曜定休。$25/人の入場料あり。事前予約必須（人数制限あり）。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">14:00</div>
+        <div class="event-icon">🍱</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Nico's Pier 38 ランチ</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">地元漁師直送の新鮮な魚を使ったポキ丼やフィッシュタコスが絶品。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">夕方</div>
+        <div class="event-icon">🌅</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">カハラ周辺ビーチ散歩</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">観光客の少ない静かなビーチでゆったりと夕暮れを楽しむ。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <button class="add-event-btn">＋ 予定を追加</button>
+    </div>
+  </div>
+
+  <!-- Day 3 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-number">DAY<span>3</span></div>
+      <div>
+        <div class="day-title">ノースショア ドライブ</div>
+        <div class="day-date">5月5日（火・こどもの日）</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">07:30</div>
+        <div class="event-icon">🚗</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">カイルアビーチへ出発</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">ワイキキから車で約40分。エメラルドグリーンの海と白砂が広がるオアフ屈指のビーチ。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">08:30</div>
+        <div class="event-icon">🚣</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">カヤック / SUP 体験</span> <span class="badge badge-activity">🎯 アクティビティ</span></div>
+          <div class="event-desc">カイルア湾でカヤックまたはスタンドアップパドルボード。透明な海の上を気持ちよく漕ぎ進む。</div>
+          <div class="tip">💡 現地でレンタル可。2時間〜 $50〜。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">11:30</div>
+        <div class="event-icon">🍤</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Giovanni's Shrimp Truck ランチ</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">ノースショア名物・ガーリックバターシュリンプの元祖フードトラック。</div>
+          <div class="tip">💡 並ぶことが多い。ランチピーク前（11時台）がねらい目。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">13:00</div>
+        <div class="event-icon">🏄</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">サンセットビーチ 見学</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">世界的に有名なサーフスポット。5月は穏やかな波のため泳ぎやすい。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">14:30</div>
+        <div class="event-icon">🏘️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">ハレイワタウン 散策</span> <span class="badge badge-sightseeing">🗺️ 観光</span></div>
+          <div class="event-desc">レトロでおしゃれなサーフタウン。ギャラリー・ショップ・カフェが並ぶ。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">15:30</div>
+        <div class="event-icon">🍧</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Matsumoto Shave Ice</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">創業1951年のシェーブアイス老舗。カラフルなシロップと練乳がけは絶品。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <button class="add-event-btn">＋ 予定を追加</button>
+    </div>
+  </div>
+
+  <!-- Day 4 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-number">DAY<span>4</span></div>
+      <div>
+        <div class="day-title">パールハーバー & コオリナラグーン</div>
+        <div class="day-date">5月6日（水）</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">08:00</div>
+        <div class="event-icon">🕊️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">パールハーバー 国立記念公園</span> <span class="badge badge-sightseeing">🗺️ 観光</span></div>
+          <div class="event-desc">アリゾナ記念館でUSS Arizonaを見学。太平洋戦争の歴史を学ぶ貴重な体験。厳粛な雰囲気で。</div>
+          <div class="tip">💡 無料だが事前予約が必要（recreation.gov）。所要約2〜3時間。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">12:00</div>
+        <div class="event-icon">🍳</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Helena's Hawaiian Food ロコモコ</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">ジェームス・ビアード賞受賞の伝説的なハワイアンフードレストラン。ロコモコやカルアポーク必食。</div>
+          <div class="tip">💡 火・水のみ営業。売り切れ次第閉店なので早めに。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">14:00</div>
+        <div class="event-icon">🏝️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Ko Olina ラグーン</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">人工ラグーンが4つ並ぶリゾートエリア。波が穏やかで初心者にも安全。透明度も高い。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">夕方</div>
+        <div class="event-icon">🌊</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">コオリナ サンセット鑑賞</span> <span class="badge badge-beach">🏖️ ビーチ</span></div>
+          <div class="event-desc">西向きのビーチなので、オアフ島随一の美しいサンセットが楽しめる。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">18:30</div>
+        <div class="event-icon">🛍️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">アラモアナ周辺でディナー</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">アラモアナセンター周辺のレストランで夕食。Roy's HawaiiやThe Cheesecake Factoryなど選択肢多数。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <button class="add-event-btn">＋ 予定を追加</button>
+    </div>
+  </div>
+
+  <!-- Day 5 -->
+  <div class="day-card">
+    <div class="day-header">
+      <div class="day-number">DAY<span>5</span></div>
+      <div>
+        <div class="day-title">最終日・お土産 & 帰国</div>
+        <div class="day-date">5月7日（木）</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">08:00</div>
+        <div class="event-icon">🎨</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">カカアコ ウォールアートエリア</span> <span class="badge badge-sightseeing">🗺️ 観光</span></div>
+          <div class="event-desc">世界のアーティストが描いた巨大壁画が並ぶストリートアートの聖地。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">09:30</div>
+        <div class="event-icon">🥞</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Eggs 'n Things パンケーキ朝食</span> <span class="badge badge-gourmet">🍽️ グルメ</span></div>
+          <div class="event-desc">ワイキキの人気店。ふわふわパンケーキの上に生クリームたっぷり。</div>
+          <div class="tip">💡 朝は並ぶことが多いので早めに。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">11:00</div>
+        <div class="event-icon">🛍️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">アラモアナショッピングセンター</span> <span class="badge badge-sightseeing">🗺️ 観光</span></div>
+          <div class="event-desc">世界最大規模のオープンモール。マカダミアナッツ・コナコーヒー・コスメなどお土産をまとめて調達。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">14:00</div>
+        <div class="event-icon">🏨</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">ホテル チェックアウト・空港へ</span></div>
+          <div class="event-desc">国際線は出発の3時間前には空港到着を目標に。お土産の最終確認もお忘れなく。</div>
+          <div class="tip">💡 ワイキキ〜空港は渋滞を考慮し余裕を持って出発。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">夜</div>
+        <div class="event-icon">✈️</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">帰国フライト</span></div>
+          <div class="event-desc">Mahalo, Hawaiʻi! またいつかきっと戻ってきます 🌺</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div>
+      <button class="add-event-btn">＋ 予定を追加</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>🌺 Mahalo! 素敵な旅を。Have a wonderful trip to Hawaiʻi! 🌊</p>
+  <p style="margin-top:6px;color:#aaa;">2026.05.03–07 Oʻahu, Hawaiʻi</p>
+</footer>
+
+<script>
+// ── Candidate data ───────────────────────────────────────────
+const CANDIDATES = [
+  // ── アクティビティ ──
+  { icon:'🏄', title:'サーフィン体験レッスン',    desc:'ワイキキで初心者向けレッスン。$50〜',              badge:'badge-activity',    label:'🎯 アクティビティ' },
+  { icon:'🐬', title:'ドルフィンスイム',           desc:'イルカと一緒に泳ぐツアー（オアフ西岸）',           badge:'badge-activity',    label:'🎯 アクティビティ' },
+  { icon:'🪂', title:'パラセーリング',             desc:'ワイキキ沖から島を一望。高さ60m〜',                badge:'badge-activity',    label:'🎯 アクティビティ' },
+  { icon:'🛥️', title:'ジェットスキー',             desc:'マリーナから手軽に楽しめる。$80〜',                badge:'badge-activity',    label:'🎯 アクティビティ' },
+  { icon:'🌿', title:'マノア滝トレイル',           desc:'片道1km。熱帯雨林の中に現れる滝が絶景',            badge:'badge-activity',    label:'🎯 アクティビティ' },
+  { icon:'📸', title:'ピルボックスハイク',          desc:'ランカイ。赤い軍用施設と青い海のコントラストが最高', badge:'badge-activity',    label:'🎯 アクティビティ' },
+  { icon:'🌅', title:'マカプウ灯台トレイル',       desc:'朝日・クジラ（冬季）が見られる絶景トレイル',       badge:'badge-activity',    label:'🎯 アクティビティ' },
+  { icon:'🤿', title:'スキューバダイビング',       desc:'初心者体験ダイブも可。カラフルな熱帯魚と珊瑚',     badge:'badge-activity',    label:'🎯 アクティビティ' },
+  // ── 観光 ──
+  { icon:'🌺', title:'ルアウ（フラショー）',       desc:'ポリネシアカルチャーセンター。夕食付き',           badge:'badge-sightseeing', label:'🗺️ 観光' },
+  { icon:'🏺', title:'ポリネシア文化センター',     desc:'ハワイ・サモア・タヒチなど島々の文化を体験',       badge:'badge-sightseeing', label:'🗺️ 観光' },
+  { icon:'🌟', title:'スターウォッチング',         desc:'マウナケア山頂ツアー（ビッグアイランド）',         badge:'badge-sightseeing', label:'🗺️ 観光' },
+  { icon:'🎵', title:'ライブミュージックバー',     desc:'ワイキキのバーでハワイアンミュージックを堪能',     badge:'badge-sightseeing', label:'🗺️ 観光' },
+  { icon:'👗', title:'Harbors Vintage',            desc:'ホノルルのヴィンテージショップ',                   badge:'badge-sightseeing', label:'🗺️ 観光' },
+  { icon:'🏔️', title:'パタゴニア ホノルル',        desc:'アウトドアブランドの直営店。ハワイ限定品も',       badge:'badge-sightseeing', label:'🗺️ 観光' },
+  { icon:'🧊', title:'YETI ホノルル',              desc:'高品質クーラー・ドリンクウェアのフラッグシップ',   badge:'badge-sightseeing', label:'🗺️ 観光' },
+  // ── グルメ（Mapsリストより）──
+  { icon:'🥐', title:'ロイヤル ハワイアン ベーカリー', desc:'ピンクパレスホテル内の老舗ベーカリー',          badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🌺', title:'ルルズ ワイキキ',            desc:'ハワイアンフード＆カクテルが揃う人気カジュアル店', badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🍰', title:'ザ チーズケーキ ファクトリー', desc:'アラモアナ。豊富なメニューと大きなポーション',    badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🍺', title:'サイド ストリート イン カパフル', desc:'地元民に愛されるローカルバー＆グリル',         badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🥩', title:'ストリップステーキ ワイキキ', desc:'ミシュラン系シェフのモダンステーキハウス',        badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🦞', title:'バリ ステーキ＆シーフード',  desc:'新鮮なシーフードとステーキが楽しめるレストラン',   badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🥩', title:'ルースズ クリス ステーキ ハウス', desc:'全米有名チェーンのプレミアムステーキ',         badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🥩', title:'ザ シグネーチャー プライムステーキ', desc:'オーシャンビューのプライムステーキ&シーフード', badge:'badge-gourmet',  label:'🍽️ グルメ' },
+  { icon:'🌊', title:'FIFTY THREE BY THE SEA',     desc:'海を一望できるオーシャンフロントレストラン',       badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🌸', title:'オーキッズ',                 desc:'ハレクラニホテルの上品なオーシャンサイドダイニング', badge:'badge-gourmet',    label:'🍽️ グルメ' },
+  { icon:'🦐', title:'EbiNomi',                    desc:'エビ料理専門店。ローカルに人気の穴場',             badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🏄', title:'サーフ ラナイ',              desc:'フォーシーズンズ内のビーチサイドレストラン',       badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🐟', title:'オフ ザ フック ポケ マーケット', desc:'新鮮なポケ丼が揃うローカルポケショップ',        badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  // ── その他グルメ ──
+  { icon:'☕', title:'コナコーヒー農園見学',       desc:'本場ハワイのコーヒー農園を見学・試飲',             badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🚚', title:'フードトラックめぐり',       desc:'カカアコエリアの多国籍フードトラック',             badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🍹', title:'ルーフトップバー',           desc:'アンダーカレントHNLで夜景とカクテル',             badge:'badge-gourmet',     label:'🍽️ グルメ' },
+  { icon:'🥬', title:'KCCファーマーズマーケット', desc:'土曜朝開催。ローカル食材・ハワイスイーツが並ぶ',   badge:'badge-gourmet',     label:'🍽️ グルメ' },
+];
+
+const BADGE_TYPES = [
+  { cls:'badge-gourmet',     label:'🍽️ グルメ' },
+  { cls:'badge-beach',       label:'🏖️ ビーチ' },
+  { cls:'badge-activity',    label:'🎯 アクティビティ' },
+  { cls:'badge-sightseeing', label:'🗺️ 観光' },
+];
+
+// ── DOM refs ─────────────────────────────────────────────────
+const main         = document.getElementById('mainContent');
+const toolbar      = document.getElementById('editToolbar');
+const editBtn      = document.getElementById('editToggleBtn');
+const saveBtn      = document.getElementById('saveBtn');
+const cancelBtn    = document.getElementById('cancelBtn');
+const resetBtn     = document.getElementById('resetBtn');
+const candGrid     = document.getElementById('candidatesGrid');
+const toggleCandBtn= document.getElementById('toggleCandidates');
+
+const STORAGE_KEY  = 'hawaii-itinerary-v2';
+const ORIGINAL_KEY = 'hawaii-itinerary-original-v2';
+
+// ── Drag state ───────────────────────────────────────────────
+let dragSrc   = null;   // dragged .event element
+let dragType  = null;   // 'event' | 'candidate'
+let dragData  = null;   // candidate data object
+let placeholder = null;
+
+function getPlaceholder() {
+  if (!placeholder) {
+    placeholder = document.createElement('div');
+    placeholder.className = 'drag-placeholder';
+    placeholder.setAttribute('draggable', 'false');
+  }
+  return placeholder;
+}
+
+// Returns the .event that the cursor is above (null = end of list)
+function getAfterElement(timeline, y) {
+  const items = [...timeline.querySelectorAll('.event:not(.dragging):not(.drag-placeholder)')];
+  let best = { offset: -Infinity, el: null };
+  for (const el of items) {
+    const { top, height } = el.getBoundingClientRect();
+    const offset = y - (top + height / 2);
+    if (offset < 0 && offset > best.offset) best = { offset, el };
+  }
+  return best.el;
+}
+
+// ── Build candidate cards ─────────────────────────────────────
+function buildCandidates() {
+  candGrid.innerHTML = '';
+  CANDIDATES.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'candidate-card';
+    card.draggable = true;
+    card.dataset.icon       = c.icon;
+    card.dataset.title      = c.title;
+    card.dataset.desc       = c.desc;
+    card.dataset.badge      = c.badge;
+    card.dataset.badgeLabel = c.label;
+    card.innerHTML = `
+      <div class="cand-icon">${c.icon}</div>
+      <div class="cand-title">${c.title}</div>
+      <div class="cand-desc">${c.desc}</div>
+      <div class="cand-badge"><span class="badge ${c.badge}">${c.label}</span></div>
+    `;
+    card.addEventListener('dragstart', e => {
+      dragType = 'candidate';
+      dragData = { icon: c.icon, title: c.title, desc: c.desc, badge: c.badge, label: c.label };
+      e.dataTransfer.effectAllowed = 'copy';
+      e.dataTransfer.setData('text/plain', 'candidate');
+      setTimeout(() => card.classList.add('dragging'), 0);
+    });
+    card.addEventListener('dragend', () => card.classList.remove('dragging'));
+    candGrid.appendChild(card);
+  });
+}
+
+// ── Create event element from candidate data ──────────────────
+function createEventEl(data, time = '未定') {
+  const el = document.createElement('div');
+  el.className = 'event';
+  el.draggable = true;
+  el.innerHTML = `
+    <div class="drag-handle">⠿</div>
+    <div class="event-time">${time}</div>
+    <div class="event-icon">${data.icon}</div>
+    <div class="event-body">
+      <div class="event-title">
+        <span class="event-title-text">${data.title}</span>
+        <span class="badge ${data.badge}">${data.label}</span>
+      </div>
+      <div class="event-desc">${data.desc}</div>
+    </div>
+    <button class="delete-btn" title="削除">×</button>
+  `;
+  if (document.body.classList.contains('edit-mode')) makeEditable(el);
+  return el;
+}
+
+// ── Drag events (on main — event delegation) ──────────────────
+main.addEventListener('dragstart', e => {
+  const ev = e.target.closest('.event');
+  if (!ev || ev.classList.contains('drag-placeholder')) return;
+  dragType = 'event';
+  dragSrc  = ev;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', 'event');
+  setTimeout(() => ev.classList.add('dragging'), 0);
+});
+
+main.addEventListener('dragend', e => {
+  const ev = e.target.closest('.event');
+  if (ev) ev.classList.remove('dragging');
+  const ph = getPlaceholder();
+  if (ph.parentNode) ph.parentNode.removeChild(ph);
+  main.querySelectorAll('.timeline').forEach(t => t.classList.remove('drag-over'));
+  dragSrc  = null;
+  dragType = null;
+  dragData = null;
+});
+
+// ── Drop targets (timelines) — event delegation ───────────────
+main.addEventListener('dragover', e => {
+  const timeline = e.target.closest('.timeline');
+  if (!timeline) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = dragType === 'candidate' ? 'copy' : 'move';
+
+  timeline.classList.add('drag-over');
+  const ph     = getPlaceholder();
+  const afterEl = getAfterElement(timeline, e.clientY);
+  const addBtn  = timeline.querySelector('.add-event-btn');
+  const ref     = afterEl ?? addBtn ?? null;
+  if (ph.nextSibling !== ref || ph.parentNode !== timeline) {
+    timeline.insertBefore(ph, ref);
+  }
+});
+
+main.addEventListener('dragleave', e => {
+  const timeline = e.target.closest('.timeline');
+  if (timeline && !timeline.contains(e.relatedTarget)) {
+    timeline.classList.remove('drag-over');
+    const ph = getPlaceholder();
+    if (ph.parentNode === timeline) timeline.removeChild(ph);
+  }
+});
+
+main.addEventListener('drop', e => {
+  const timeline = e.target.closest('.timeline');
+  if (!timeline) return;
+  e.preventDefault();
+  timeline.classList.remove('drag-over');
+
+  const ph = getPlaceholder();
+
+  if (dragType === 'candidate' && dragData) {
+    const newEl = createEventEl(dragData);
+    if (ph.parentNode === timeline) timeline.replaceChild(newEl, ph);
+    else timeline.insertBefore(newEl, timeline.querySelector('.add-event-btn') ?? null);
+  } else if (dragType === 'event' && dragSrc) {
+    if (ph.parentNode === timeline) timeline.replaceChild(dragSrc, ph);
+    else timeline.insertBefore(dragSrc, timeline.querySelector('.add-event-btn') ?? null);
+    dragSrc.classList.remove('dragging');
+  }
+
+  dragSrc  = null;
+  dragType = null;
+  dragData = null;
+});
+
+// ── Delete buttons (event delegation) ────────────────────────
+main.addEventListener('click', e => {
+  if (e.target.classList.contains('delete-btn')) {
+    e.target.closest('.event')?.remove();
+  }
+  if (e.target.classList.contains('add-event-btn')) {
+    addEmptyEvent(e.target.closest('.timeline'));
+  }
+  if (e.target.classList.contains('badge') && document.body.classList.contains('edit-mode')) {
+    cycleBadge(e.target);
+  }
+});
+
+function cycleBadge(badge) {
+  const cur  = BADGE_TYPES.findIndex(t => badge.classList.contains(t.cls));
+  const next = BADGE_TYPES[(cur + 1) % BADGE_TYPES.length];
+  BADGE_TYPES.forEach(t => badge.classList.remove(t.cls));
+  badge.classList.add(next.cls);
+  badge.textContent = next.label;
+}
+
+function addEmptyEvent(timeline) {
+  const el = createEventEl({ icon:'📌', title:'予定のタイトル', desc:'詳細を入力してください。', badge:'badge-sightseeing', label:'🗺️ 観光' });
+  timeline.insertBefore(el, timeline.querySelector('.add-event-btn') ?? null);
+  el.querySelector('.event-title-text')?.focus();
+}
+
+// ── Edit mode ─────────────────────────────────────────────────
+const EDITABLE = ['.event-time','.event-icon','.event-title-text','.event-desc','.tip','.day-title','.day-date'];
+let snapshotHTML = '';
+
+function makeEditable(root) {
+  EDITABLE.forEach(sel => root.querySelectorAll?.(sel).forEach(el => { el.contentEditable = 'true'; }));
+}
+function removeEditable() {
+  main.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+}
+
+function enterEditMode() {
+  snapshotHTML = main.innerHTML;
+  document.body.classList.add('edit-mode');
+  toolbar.classList.add('visible');
+  editBtn.style.display = 'none';
+  makeEditable(main);
+}
+function exitEditMode(doSave) {
+  document.body.classList.remove('edit-mode');
+  toolbar.classList.remove('visible');
+  editBtn.style.display = '';
+  removeEditable();
+  if (doSave) saveToStorage();
+  else { main.innerHTML = snapshotHTML; }
+}
+
+editBtn.addEventListener('click', enterEditMode);
+saveBtn.addEventListener('click', () => exitEditMode(true));
+cancelBtn.addEventListener('click', () => exitEditMode(false));
+resetBtn.addEventListener('click', () => {
+  const orig = localStorage.getItem(ORIGINAL_KEY);
+  if (!orig) return;
+  if (!confirm('旅程を最初の状態に戻しますか？（保存した変更はすべて失われます）')) return;
+  main.innerHTML = orig;
+  localStorage.removeItem(STORAGE_KEY);
+  if (document.body.classList.contains('edit-mode')) makeEditable(main);
+});
+
+// ── Candidates toggle ─────────────────────────────────────────
+let candOpen = true;
+toggleCandBtn.addEventListener('click', () => {
+  candOpen = !candOpen;
+  document.getElementById('candidatesGrid').classList.toggle('collapsed', !candOpen);
+  toggleCandBtn.textContent = candOpen ? '∧ 折りたたむ' : '∨ 展開する';
+});
+
+// ── Local Storage ─────────────────────────────────────────────
+function saveLocal()   { localStorage.setItem(STORAGE_KEY, main.innerHTML); }
+function loadLocal()   { const s = localStorage.getItem(STORAGE_KEY); if (s) main.innerHTML = s; }
+function saveOriginal(){ if (!localStorage.getItem(ORIGINAL_KEY)) localStorage.setItem(ORIGINAL_KEY, main.innerHTML); }
+
+// ── GitHub Sync ────────────────────────────────────────────────
+const GH = { user:'gh_user', repo:'gh_repo', token:'gh_token', sha:'gh_sha' };
+const ghG = k => localStorage.getItem(GH[k]);
+const ghS = (k,v) => localStorage.setItem(GH[k], v);
+const isGhReady = () => ghG('user') && ghG('repo') && ghG('token');
+
+function setSyncStatus(s) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  const map = {
+    syncing: ['⟳ 同期中…',  'rgba(255,255,255,0.6)'],
+    saved:   ['☁ 保存済み',  '#7fffee'],
+    error:   ['⚠ 同期失敗',  '#ffaaaa'],
+    local:   ['📱 ローカルのみ','rgba(255,255,255,0.5)'],
+  };
+  const [text, color] = map[s] || map.local;
+  el.textContent = text; el.style.color = color;
+}
+
+async function ghFetch(method, body) {
+  const url = `https://api.github.com/repos/${ghG('user')}/${ghG('repo')}/contents/data.json`;
+  const headers = { Authorization: `token ${ghG('token')}`, 'Content-Type': 'application/json' };
+  return fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined });
+}
+
+async function ghLoad() {
+  if (!isGhReady()) return false;
+  try {
+    setSyncStatus('syncing');
+    const r = await ghFetch('GET');
+    if (!r.ok) { setSyncStatus('local'); return false; }
+    const file = await r.json();
+    ghS('sha', file.sha);
+    const html = decodeURIComponent(escape(atob(file.content)));
+    main.innerHTML = html;
+    setSyncStatus('saved');
+    return true;
+  } catch { setSyncStatus('error'); return false; }
+}
+
+async function ghSave() {
+  if (!isGhReady()) return;
+  try {
+    setSyncStatus('syncing');
+    const content = btoa(unescape(encodeURIComponent(main.innerHTML)));
+    const body = { message: '旅程更新', content };
+    if (ghG('sha')) body.sha = ghG('sha');
+    const r = await ghFetch('PUT', body);
+    if (!r.ok) throw new Error();
+    const res = await r.json();
+    ghS('sha', res.content.sha);
+    setSyncStatus('saved');
+  } catch { setSyncStatus('error'); }
+}
+
+function saveToStorage() { saveLocal(); ghSave(); }
+function loadFromStorage() {
+  loadLocal(); // まずローカルを表示
+  ghLoad();    // その後クラウドで上書き（非同期）
+}
+
+// ── Settings modal ─────────────────────────────────────────────
+const modal = document.getElementById('settingsModal');
+document.getElementById('settingsBtn').addEventListener('click', () => {
+  document.getElementById('ghUser').value  = ghG('user')  || '';
+  document.getElementById('ghRepo').value  = ghG('repo')  || '';
+  document.getElementById('ghToken').value = ghG('token') || '';
+  document.getElementById('modalStatus').textContent = '';
+  modal.classList.add('open');
+});
+document.getElementById('modalClose').addEventListener('click', () => modal.classList.remove('open'));
+modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+
+document.getElementById('modalSave').addEventListener('click', async () => {
+  const user  = document.getElementById('ghUser').value.trim();
+  const repo  = document.getElementById('ghRepo').value.trim();
+  const token = document.getElementById('ghToken').value.trim();
+  const status = document.getElementById('modalStatus');
+  if (!user || !repo || !token) { status.style.color='#e00'; status.textContent='すべて入力してください'; return; }
+
+  status.style.color = '#888'; status.textContent = '接続確認中…';
+  try {
+    const r = await fetch(`https://api.github.com/repos/${user}/${repo}`,
+      { headers: { Authorization: `token ${token}` } });
+    if (!r.ok) throw new Error('repo not found');
+    ghS('user', user); ghS('repo', repo); ghS('token', token);
+    localStorage.removeItem(GH.sha); // SHA をリセット
+    status.style.color = '#00a99d'; status.textContent = '✓ 接続成功！';
+    setSyncStatus('local');
+    setTimeout(() => modal.classList.remove('open'), 1200);
+  } catch {
+    status.style.color = '#e00';
+    status.textContent = '接続失敗。ユーザー名・リポジトリ名・トークンを確認してください。';
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────
+buildCandidates();
+saveOriginal();
+loadFromStorage();
+
+// ── Touch Drag & Drop (iOS / モバイル対応) ─────────────────────
+let tEl     = null;   // ドラッグ中の .event
+let tType   = null;   // 'event' | 'candidate'
+let tData   = null;
+let tClone  = null;   // 指に追従するゴースト要素
+let tPH     = null;   // プレースホルダー
+let tTimer  = null;   // 長押し判定タイマー
+let tStartX = 0, tStartY = 0;
+let tActive = false;
+let tCloneH = 0;
+
+function tGetPH() {
+  if (!tPH) {
+    tPH = document.createElement('div');
+    tPH.className = 'drag-placeholder';
+    tPH.style.pointerEvents = 'none';
+  }
+  return tPH;
+}
+
+function tMakeClone(src) {
+  const rect = src.getBoundingClientRect();
+  tCloneH = rect.height;
+  const c = src.cloneNode(true);
+  c.style.cssText = `position:fixed;left:${rect.left}px;top:${rect.top}px;
+    width:${rect.width}px;z-index:9999;pointer-events:none;opacity:0.88;
+    transform:scale(1.04) rotate(1.2deg);
+    box-shadow:0 14px 36px rgba(0,0,0,0.25);border-radius:14px;
+    background:white;transition:none;`;
+  document.body.appendChild(c);
+  return c;
+}
+
+function tBegin(type, el, data) {
+  tType = type; tEl = el; tData = data; tActive = true;
+  tClone = tMakeClone(el);
+  if (type === 'event') {
+    const ph = tGetPH();
+    el.parentNode.insertBefore(ph, el);
+    el.style.opacity = '0.15';
+  }
+  if (navigator.vibrate) navigator.vibrate(35);
+}
+
+function tCleanup() {
+  if (tClone) { tClone.remove(); tClone = null; }
+  const ph = tGetPH();
+  if (ph.parentNode) ph.parentNode.removeChild(ph);
+  if (tEl) tEl.style.opacity = '';
+  document.querySelectorAll('.timeline').forEach(t => t.classList.remove('drag-over'));
+  tEl = tType = tData = null;
+  tActive = false;
+}
+
+document.addEventListener('touchstart', e => {
+  const handle = e.target.closest('.drag-handle');
+  const card   = e.target.closest('.candidate-card');
+  tStartX = e.touches[0].clientX;
+  tStartY = e.touches[0].clientY;
+
+  if (handle) {
+    const ev = handle.closest('.event');
+    if (!ev) return;
+    e.preventDefault();
+    tBegin('event', ev, null);
+  } else if (card) {
+    // 長押し300msでドラッグ開始（スクロールと区別）
+    card.style.transition = 'transform 0.3s';
+    tTimer = setTimeout(() => {
+      card.style.transform = 'scale(0.95)';
+      setTimeout(() => { card.style.transform = ''; }, 150);
+      tBegin('candidate', card, {
+        icon: card.dataset.icon, title: card.dataset.title,
+        desc: card.dataset.desc, badge: card.dataset.badge,
+        label: card.dataset.badgeLabel,
+      });
+    }, 300);
+  }
+}, { passive: false });
+
+document.addEventListener('touchmove', e => {
+  const touch = e.touches[0];
+  // 指が動いたら長押しをキャンセル（しきい値12px）
+  if (tTimer) {
+    if (Math.abs(touch.clientX - tStartX) > 12 || Math.abs(touch.clientY - tStartY) > 12) {
+      clearTimeout(tTimer); tTimer = null;
+    }
+  }
+  if (!tActive || !tClone) return;
+  e.preventDefault();
+
+  const x = touch.clientX, y = touch.clientY;
+  // クローンを指の少し上に表示（見やすくするため）
+  tClone.style.left = (x - tClone.offsetWidth / 2) + 'px';
+  tClone.style.top  = (y - tCloneH - 16) + 'px';
+
+  // 指の真下の要素を検出
+  tClone.style.visibility = 'hidden';
+  const under = document.elementFromPoint(x, y);
+  tClone.style.visibility = '';
+
+  const timeline = under?.closest('.timeline');
+  document.querySelectorAll('.timeline').forEach(t => t.classList.remove('drag-over'));
+
+  if (timeline) {
+    timeline.classList.add('drag-over');
+    const ph      = tGetPH();
+    const afterEl = getAfterElement(timeline, y);
+    const addBtn  = timeline.querySelector('.add-event-btn');
+    const ref     = afterEl ?? addBtn ?? null;
+    if (ph.parentNode !== timeline || ph.nextSibling !== ref) {
+      timeline.insertBefore(ph, ref);
+    }
+  }
+}, { passive: false });
+
+document.addEventListener('touchend', e => {
+  clearTimeout(tTimer); tTimer = null;
+  if (!tActive) return;
+
+  const touch = e.changedTouches[0];
+  tClone.style.visibility = 'hidden';
+  const under = document.elementFromPoint(touch.clientX, touch.clientY);
+  tClone.style.visibility = '';
+
+  const timeline = under?.closest('.timeline');
+  const ph = tGetPH();
+
+  if (timeline) {
+    if (tType === 'candidate' && tData) {
+      const newEl = createEventEl(tData);
+      if (ph.parentNode === timeline) timeline.replaceChild(newEl, ph);
+      else timeline.insertBefore(newEl, timeline.querySelector('.add-event-btn') ?? null);
+    } else if (tType === 'event' && tEl) {
+      tEl.style.opacity = '';
+      if (ph.parentNode === timeline) timeline.replaceChild(tEl, ph);
+      else timeline.insertBefore(tEl, timeline.querySelector('.add-event-btn') ?? null);
+    }
+  }
+  tCleanup();
+}, { passive: false });
+</script>
+
+</body>
+</html>
