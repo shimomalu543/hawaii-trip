@@ -100,16 +100,7 @@
         </div>
         <button class="delete-btn" title="削除">×</button>
       </div>
-      <div class="event" draggable="true">
-        <div class="drag-handle">⠿</div>
-        <div class="event-time">09:00</div>
-        <div class="event-icon">🍩</div>
-        <div class="event-body">
-          <div class="event-title"><span class="event-title-text">Leonard's Bakery マラサダ</span> <span class="badge badge-gourmet">🍽️ グルメ</span><a class="event-map" href="#" title="Google Mapsで開く">📍</a></div>
-          <div class="event-desc">ハワイ名物のポルトガル系揚げドーナツ「マラサダ」発祥の老舗。外はカリッ、中はふわふわ。</div>
-        </div>
-        <button class="delete-btn" title="削除">×</button>
-      </div>
+      
       <div class="event" draggable="true">
         <div class="drag-handle">⠿</div>
         <div class="event-time">10:30</div>
@@ -155,28 +146,50 @@
       </div>
     </div>
     <div class="timeline">
+      
       <div class="event" draggable="true">
         <div class="drag-handle">⠿</div>
-        <div class="event-time">07:30</div>
+        <div class="event-time">08:00</div>
         <div class="event-icon">🚗</div>
         <div class="event-body">
-          <div class="event-title"><span class="event-title-text">カイルアビーチへ出発</span> <span class="badge badge-beach">🏖️ ビーチ</span><a class="event-map" href="#" title="Google Mapsで開く">📍</a></div>
-          <div class="event-desc">ワイキキから車で約40分。エメラルドグリーンの海と白砂が広がるオアフ屈指のビーチ。</div>
+          <div class="event-title"><span class="event-title-text">Herts Hyat　Honolulu</span> <span class="badge badge-beach">🏖️ ビーチ</span><a class="event-map" href="#" title="Google Mapsで開く">📍</a></div>
+          <div class="event-desc"><br></div>
         </div>
         <button class="delete-btn" title="削除">×</button>
-      </div>
-      <div class="event" draggable="true">
+      </div><div class="event" draggable="true">
         <div class="drag-handle">⠿</div>
-        <div class="event-time">08:30</div>
+        <div class="event-time">09:00</div>
+        <div class="event-icon">🍩</div>
+        <div class="event-body">
+          <div class="event-title"><span class="event-title-text">Leonard's Bakery マラサダ</span> <span class="badge badge-gourmet">🍽️ グルメ</span><a class="event-map" href="#" title="Google Mapsで開く">📍</a></div>
+          <div class="event-desc">ハワイ名物のポルトガル系揚げドーナツ「マラサダ」発祥の老舗。外はカリッ、中はふわふわ。</div>
+        </div>
+        <button class="delete-btn" title="削除">×</button>
+      </div><div class="event" draggable="true">
+        <div class="drag-handle">⠿</div>
+        <div class="event-time">10:00</div>
         <div class="event-icon">🚣</div>
         <div class="event-body">
-          <div class="event-title"><span class="event-title-text">カヤック / SUP 体験</span> <span class="badge badge-activity">🎯 アクティビティ</span><a class="event-map" href="#" title="Google Mapsで開く">📍</a></div>
-          <div class="event-desc">カイルア湾でカヤックまたはスタンドアップパドルボード。透明な海の上を気持ちよく漕ぎ進む。</div>
-          <div class="tip">💡 現地でレンタル可。2時間〜 $50〜。</div>
+          <div class="event-title"><span class="event-title-text">Bay view mini golf</span> <span class="badge badge-activity">🎯 アクティビティ</span><a class="event-map" href="#" title="Google Mapsで開く">📍</a></div>
+          <div class="event-desc"><br></div>
+          <div class="tip"><br></div>
         </div>
         <button class="delete-btn" title="削除">×</button>
       </div>
       <div class="event" draggable="true">
+    <div class="drag-handle">⠿</div>
+    <div class="event-time">未定</div>
+    <div class="event-icon">🐟</div>
+    <div class="event-body">
+      <div class="event-title">
+        <span class="event-title-text">オフ ザ フック ポケ マーケット</span>
+        <span class="badge badge-gourmet">🍽️ グルメ</span>
+        <a class="event-map" href="#" title="Google Mapsで開く">📍</a>
+      </div>
+      <div class="event-desc">新鮮なポケ丼が揃うローカルポケショップ</div>
+    </div>
+    <button class="delete-btn" title="削除">×</button>
+  </div><div class="event" draggable="true">
         <div class="drag-handle">⠿</div>
         <div class="event-time">11:30</div>
         <div class="event-icon">🍤</div>
